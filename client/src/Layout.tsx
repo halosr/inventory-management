@@ -1,12 +1,20 @@
-import React from 'react'
-import ProductForm from './components/form/ProductForm'
+import React, { type ReactNode } from 'react';
+import NavBar from '@/components/navbar/NavBar';
+import { Box } from '@mui/material';
+import Footer from './components/footer/Footer';
 
-function Layout() {
-  return (
-    <div>
-        <ProductForm/>
-    </div>
-  )
+interface LayoutProps {
+    children?: ReactNode;
 }
 
-export default Layout
+function Layout({ children }: LayoutProps) {
+    return (
+        <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
+            <NavBar />
+            <Box sx={{flexGrow: 1, margin: '1.5rem'}}>{children}</Box>
+            <Footer />
+        </Box>
+    );
+}
+
+export default Layout;
