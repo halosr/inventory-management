@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import './App.css';
 import Layout from '@/Layout';
 import ProductForm from '@/components/productform/ProductForm';
-import Summary from '@/components/summary/Summary';
 import ProductTable from '@/components/producttable/ProductTable';
+import Summary from '@/components/summary/Summary';
+import './App.css';
 
 function App() {
     return (
