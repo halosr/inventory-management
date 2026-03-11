@@ -1,16 +1,25 @@
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { getProducts } from '@/store/product.slice';
 import {
-  Button,
-  ButtonGroup,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+    Button,
+    ButtonGroup,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
 } from '@mui/material';
+import { useEffect } from 'react';
 
 function ProductTable() {
+    const dispatch = useAppDispatch();
+    const { productList } = useAppSelector((state) => state?.products);
+    useEffect(() => {
+        dispatch(getProducts());
+    }, [dispatch]);
+
     return (
         <Paper>
             <TableContainer>
@@ -26,23 +35,25 @@ function ProductTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>1</TableCell>
-                            <TableCell>Pen</TableCell>
-                            <TableCell>Elkos Alpha</TableCell>
-                            <TableCell>10</TableCell>
-                            <TableCell>300</TableCell>
-                            <TableCell sx={{ textAlign: 'center' }}>
-                                <ButtonGroup>
-                                    <Button variant="contained" color="primary">
-                                        Edit
-                                    </Button>
-                                    <Button variant="outlined" color="warning">
-                                        Delete
-                                    </Button>
-                                </ButtonGroup>
-                            </TableCell>
-                        </TableRow>
+                        {productList.map((p) => (
+                            <TableRow>
+                                <TableCell>{p.id}</TableCell>
+                                <TableCell>{p.name}</TableCell>
+                                <TableCell>{p.description}</TableCell>
+                                <TableCell>{p.price}</TableCell>
+                                <TableCell>{p.quantity}</TableCell>
+                                <TableCell sx={{ textAlign: 'center' }}>
+                                    <ButtonGroup>
+                                        <Button variant="contained" color="primary">
+                                            Edit
+                                        </Button>
+                                        <Button variant="outlined" color="warning">
+                                            Delete
+                                        </Button>
+                                    </ButtonGroup>
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
