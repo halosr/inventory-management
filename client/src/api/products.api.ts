@@ -20,21 +20,19 @@ export async function getProductApi(id: number) {
 }
 
 export async function addProductApi(product: Product) {
-    const data = await axios.post(`http://localhost:8000/products`, {
+    const data = await axios.post(`http://localhost:8000/product`, product, {
         headers: {
             'Content-Type': 'application/json',
         },
-        data: product,
     });
     return data;
 }
 
 export async function updateProductApi(id: number, product: Product) {
-    const data = await axios.put(`http://localhost:8000/products/${id}`, {
+    const data = await axios.put(`http://localhost:8000/products/${id}`, product, {
         headers: {
             'Content-Type': 'application/json',
         },
-        data: product,
     });
     return data;
 }
