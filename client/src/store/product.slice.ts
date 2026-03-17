@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { Product } from '@/types/product';
 import {
     addProductApi,
@@ -57,15 +57,29 @@ export const updateProduct = createAsyncThunk(
 );
 
 export const deleteProduct = createAsyncThunk('product/deleteProduct', async (id: number) => {
-    const res = await deleteProductApi(id);
+    await deleteProductApi(id);
 
-    return res.data;
+    // return id so reducer can remove from list even if API returns empty body
+    return id;
 });
 
 const productSlice = createSlice({
     name: 'product',
     initialState,
-    reducers: {},
+    reducers: {
+        editField: (state, action: PayloadAction<{ name: string; value: string | number | null }>) => {
+            const { name, value } = action.payload;
+            state.product = {
+                ...state.product,
+                [name]: value,
+            };
+        },
+        clearForm: (state) => {
+            (Object.keys(state.product) as Array<keyof Product>).forEach((k) => {
+                state.product[k] = null;
+            });
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getProducts.pending, (state) => {
@@ -92,8 +106,37 @@ const productSlice = createSlice({
             .addCase(createProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message ?? 'Failed to add product';
+            })
+            .addCase(updateProduct.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.productList = state.productList.map((p) =>
+                    p.id === action.payload.id ? action.payload : p
+                );
+                state.product = action.payload;
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message ?? 'Failed to update product';
+            })
+            .addCase(deleteProduct.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.productList = state.productList.filter((p) => p.id !== action.payload);
+            })
+            .addCase(deleteProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message ?? 'Failed to delete the product';
             });
     },
 });
+
+export const { editField, clearForm } = productSlice.actions;
 
 export default productSlice.reducer;
