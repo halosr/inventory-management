@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { getProducts } from '@/store/product.slice';
+import { deleteProduct, getProducts } from '@/store/product.slice';
 import {
     Button,
     ButtonGroup,
@@ -16,6 +16,10 @@ import { useEffect } from 'react';
 function ProductTable() {
     const dispatch = useAppDispatch();
     const { productList } = useAppSelector((state) => state?.products);
+
+    const handleDelete = (id: number) => {
+        dispatch(deleteProduct(id));
+    }
     useEffect(() => {
         dispatch(getProducts());
     }, [dispatch]);
@@ -36,7 +40,7 @@ function ProductTable() {
                     </TableHead>
                     <TableBody>
                         {productList.map((p) => (
-                            <TableRow>
+                            <TableRow key={p.id}>
                                 <TableCell>{p.id}</TableCell>
                                 <TableCell>{p.name}</TableCell>
                                 <TableCell>{p.description}</TableCell>
@@ -47,7 +51,11 @@ function ProductTable() {
                                         <Button variant="contained" color="primary">
                                             Edit
                                         </Button>
-                                        <Button variant="outlined" color="warning">
+                                        <Button
+                                            variant="outlined"
+                                            color="warning"
+                                            onClick={() => p.id != null && handleDelete(p.id)}
+                                        >
                                             Delete
                                         </Button>
                                     </ButtonGroup>
