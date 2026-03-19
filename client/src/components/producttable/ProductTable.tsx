@@ -17,6 +17,11 @@ function ProductTable() {
     const dispatch = useAppDispatch();
     const { productList } = useAppSelector((state) => state?.products);
 
+    const handleEdit = (id: number) => {
+        // logic to dispatch an action which fills the reward state in redux from the reward list 
+        // and populate the same in the editor form
+    }
+
     const handleDelete = (id: number) => {
         dispatch(deleteProduct(id));
     }
@@ -48,7 +53,7 @@ function ProductTable() {
                                 <TableCell>{p.quantity}</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>
                                     <ButtonGroup>
-                                        <Button variant="contained" color="primary">
+                                        <Button variant="contained" color="primary" onClick={() => p.id != null && handleEdit(p.id)}>
                                             Edit
                                         </Button>
                                         <Button
