@@ -1,15 +1,15 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { clearForm, createProduct, editField } from '@/store/product.slice';
+import { clearForm, createProduct, editField, updateProduct } from '@/store/product.slice';
 import { Box, Button, ButtonGroup, FormControl, Paper, TextField, Typography } from '@mui/material';
 
 function ProductForm() {
     const dispatch = useAppDispatch();
-    const { product } = useAppSelector((state) => state?.products);
+    const { product, isUpdate } = useAppSelector((state) => state?.products);
     const handleChange = (name: string, value: string | number) => {
         dispatch(editField({ name, value }));
     };
     const submitForm = () => {
-        dispatch(createProduct(product));
+        isUpdate ? dispatch(updateProduct({id: product.id!, product}) ) : dispatch(createProduct(product));
     };
 
     return (
