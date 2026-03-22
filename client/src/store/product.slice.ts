@@ -13,6 +13,7 @@ interface ProductState {
     product: Product;
     loading: boolean;
     error: string | null;
+    isUpdate: boolean;
 }
 
 const initialState: ProductState = {
@@ -26,6 +27,7 @@ const initialState: ProductState = {
     },
     loading: false,
     error: null,
+    isUpdate: false
 };
 
 export const getProducts = createAsyncThunk('product/getProducts', async () => {
@@ -50,8 +52,10 @@ export const createProduct = createAsyncThunk('product/createProduct', async (pr
 
 export const updateProduct = createAsyncThunk(
     'product/updateProduct',
-    async (payload: { id: number; product: Product }) => {
+    async (payload: { id: number; product: Product }, thunkApi) => {
         const res = await updateProductApi(payload.id, payload.product);
+
+        thunkApi.dispatch(getProducts())
         return res.data as Product;
     }
 );
@@ -78,6 +82,14 @@ const productSlice = createSlice({
             (Object.keys(state.product) as Array<keyof Product>).forEach((k) => {
                 state.product[k] = null;
             });
+        },
+        fillForm: (state, action: PayloadAction<{ id: number }>) => {
+            const { id } = action.payload;
+            const productToEdit = state.productList.find((p: Product) => p.id === id);
+            if (productToEdit) {
+                state.product = { ...productToEdit };
+                state.isUpdate = true;
+            }
         },
     },
     extraReducers: (builder) => {
@@ -113,9 +125,8 @@ const productSlice = createSlice({
             })
             .addCase(updateProduct.fulfilled, (state, action) => {
                 state.loading = false;
-                state.productList = state.productList.map((p) =>
-                    p.id === action.payload.id ? action.payload : p
-                );
+                state.isUpdate = false;
+                state.productList = state.productList.map((p) => (p.id === action.payload.id ? action.payload : p));
                 state.product = action.payload;
             })
             .addCase(updateProduct.rejected, (state, action) => {
@@ -137,6 +148,6 @@ const productSlice = createSlice({
     },
 });
 
-export const { editField, clearForm } = productSlice.actions;
+export const { editField, clearForm, fillForm } = productSlice.actions;
 
 export default productSlice.reducer;
