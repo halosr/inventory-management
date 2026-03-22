@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { deleteProduct, getProducts } from '@/store/product.slice';
+import { deleteProduct, fillForm, getProducts } from '@/store/product.slice';
 import {
     Button,
     ButtonGroup,
@@ -18,13 +18,12 @@ function ProductTable() {
     const { productList } = useAppSelector((state) => state?.products);
 
     const handleEdit = (id: number) => {
-        // logic to dispatch an action which fills the reward state in redux from the reward list 
-        // and populate the same in the editor form
-    }
+        dispatch(fillForm({ id }));
+    };
 
     const handleDelete = (id: number) => {
         dispatch(deleteProduct(id));
-    }
+    };
     useEffect(() => {
         dispatch(getProducts());
     }, [dispatch]);
@@ -53,7 +52,11 @@ function ProductTable() {
                                 <TableCell>{p.quantity}</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>
                                     <ButtonGroup>
-                                        <Button variant="contained" color="primary" onClick={() => p.id != null && handleEdit(p.id)}>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => p.id != null && handleEdit(p.id)}
+                                        >
                                             Edit
                                         </Button>
                                         <Button
